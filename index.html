@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Dashboard</title>
+    <style>
+        /* 1. RESET & THEME VARIABLES */
+        :root {
+            --bg-dark: #0d0d12;
+            --card-bg: #16161e;
+            --accent-gold: #ffd700;
+            --accent-gold-dark: #b8860b;
+            --text-main: #ffffff;
+            --text-muted: #888891;
+            --border-color: #2d2d3a;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+        }
+
+        /* 2. LAYOUT STRUCTURE */
+        .dashboard-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 3. SIDEBAR STYLING */
+        .sidebar {
+            width: 240px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-links li {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-links li:hover, .nav-links li.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--accent-gold);
+        }
+
+        /* 4. MAIN CONTENT AREA */
+        .main-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        /* 5. HERO SECTION */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://unsplash.com');
+            background-size: cover;
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            color: black;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-gold:hover {
+            transform: scale(1.05);
+        }
+
+        /* 6. VIDEO LIBRARY GRID */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .video-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .video-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-5px);
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 160px;
+            background: #252530;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .video-info {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-title { font-weight: 500; }
+        
+        .btn-edit {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-size: 0.8rem;
+            border: 1px solid var(--accent-gold);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        /* 7. RESPONSIVENESS */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .hero { padding: 30px; }
+            .hero h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">✨ AI VIDEO</div>
+            <ul class="nav-links">
+                <li class="active">🏠 Dashboard</li>
+                <li>📹 Create Video</li>
+                <li>📚 Video Library</li>
+                <li>💳 Pricing</li>
+                <li>⚙️ Settings</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Banner -->
+            <section class="hero">
+                <h1>Create Stunning Videos with AI</h1>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Turn your text into cinematic masterpieces in seconds.</p>
+                <button class="btn-gold">GET STARTED</button>
+            </section>
+
+            <!-- Video Library Section -->
+            <div class="section-header">
+                <h2>Recent Projects</h2>
+                <span style="color: var(--accent-gold); cursor: pointer;">View All →</span>
+            </div>
+
+            <div class="video-grid">
+                <!-- Card 1 -->
+                <div class="video-card">
+                    <div class="thumbnail">🌌</div>
+                    <div class="video-info">
+                        <span class="video-title">Epic City Cinematic</span>
+                        <a href="#" class="btn-edit">Edit</a>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="video-card">
+                    <div class="thumbnail">🚀</div>
+                    <div class="video-info">
+                        <span class="video-title">Space Exploration</span>
+                        <a href="#" class="btn-edit">Edit</a>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="video-card">
+                    <div class="thumbnail">🦁</div>
+                    <div class="video-info">
+                        <span class="video-title">Wildlife Documentary</span>
+                        <a href="#" class="btn-edit">Edit</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
