@@ -1,379 +1,173 @@
-import React, { useState } from "react";
-import { Check, Zap, Crown, Sparkles, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import React, { useState, useMemo } from 'react';
+import { Check, Zap, Crown, ShieldCheck, Copy, Terminal, ChevronRight, Sparkles } from 'lucide-react';
 
-const PRICING_PLANS = [
-  {
-    id: "free",
-    name: "Free",
-    price: "0",
-    period: "Forever",
-    description: "Perfect for trying it out",
-    icon: "🎬",
-    features: [
-      "3 videos per month",
-      "Basic templates",
-      "Standard quality",
-      "Community support",
-      "Basic music library",
-    ],
-    cta: "Get Started",
-    highlighted: false,
-    videos: 3,
-  },
-  {
-    id: "starter",
-    name: "Starter",
-    price: "9.99",
-    period: "/month",
-    description: "For content creators",
-    icon: "⚡",
-    features: [
-      "10 videos per month",
-      "All templates",
-      "HD quality",
-      "Email support",
-      "Full music library",
-      "Custom music upload",
-      "Social sharing",
-    ],
-    cta: "Start Free Trial",
-    highlighted: false,
-    videos: 10,
-    stripeId: "price_starter",
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: "29.99",
-    period: "/month",
-    description: "For serious creators",
-    icon: "🚀",
-    features: [
-      "50 videos per month",
-      "Premium templates",
-      "4K quality",
-      "Priority support",
-      "Advanced effects",
-      "Batch generation",
-      "Video analytics",
-      "Team collaboration",
-    ],
-    cta: "Upgrade to Pro",
-    highlighted: true,
-    videos: 50,
-    stripeId: "price_pro",
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    price: "59.99",
-    period: "/month",
-    description: "For professionals",
-    icon: "💎",
-    features: [
-      "Unlimited videos",
-      "All premium templates",
-      "8K quality",
-      "24/7 priority support",
-      "Advanced AI features",
-      "Custom branding",
-      "API access",
-      "Dedicated account manager",
-    ],
-    cta: "Upgrade to Premium",
-    highlighted: false,
-    videos: "unlimited",
-    stripeId: "price_premium",
-  },
-  {
-    id: "gold",
-    name: "Gold",
-    price: "250",
-    period: "/year",
-    description: "The ultimate package",
-    icon: "👑",
-    features: [
-      "Unlimited videos forever",
-      "All exclusive templates",
-      "Highest quality (8K+)",
-      "VIP 24/7 support",
-      "Early access to features",
-      "White-label options",
-      "Priority processing",
-      "Lifetime updates",
-      "Exclusive community",
-    ],
-    cta: "Get Gold Membership",
-    highlighted: false,
-    videos: "unlimited",
-    stripeId: "price_gold",
-    badge: "BEST VALUE",
-  },
-];
-
-function PricingCard({ plan, onSelect }) {
-  return (
-    <motion.div
-      whileHover={{ scale: 1.02, y: -10 }}
-      whileTap={{ scale: 0.98 }}
-      className={`relative rounded-3xl overflow-hidden transition-all duration-300 ${
-        plan.highlighted
-          ? "ring-2 ring-primary shadow-2xl shadow-primary/30"
-          : "glass hover:border-primary/30"
-      }`}
-    >
-      {/* Background glow */}
-      <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/20 blur-3xl rounded-full -top-48" />
-      </div>
-
-      {/* Badge */}
-      {plan.badge && (
-        <div className="absolute top-4 right-4 z-10">
-          <motion.div
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="px-3 py-1 rounded-full bg-gradient-to-r from-primary to-purple-500 text-white text-xs font-bold"
-          >
-            {plan.badge}
-          </motion.div>
-        </div>
-      )}
-
-      <div className="relative z-10 p-8 space-y-6">
-        {/* Header */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-4xl">{plan.icon}</div>
-            {plan.highlighted && (
-              <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-            )}
-          </div>
-          <h3 className="text-2xl font-bold font-heading tracking-tight">
-            {plan.name}
-          </h3>
-          <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
-        </div>
-
-        {/* Price */}
-        <div className="space-y-1">
-          <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-bold font-heading">${plan.price}</span>
-            <span className="text-muted-foreground text-sm">{plan.period}</span>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {typeof plan.videos === "number"
-              ? `${plan.videos} videos per month`
-              : "Unlimited videos"}
-          </p>
-        </div>
-
-        {/* CTA Button */}
-        <button
-          onClick={() => onSelect(plan)}
-          className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
-            plan.highlighted
-              ? "bg-gradient-to-r from-primary to-primary/80 text-white hover:shadow-2xl hover:shadow-primary/40 hover:scale-105"
-              : "glass text-foreground hover:bg-white/10 hover:border-primary/50"
-          }`}
-        >
-          {plan.cta}
-          <ArrowRight size={16} />
-        </button>
-
-        {/* Features */}
-        <div className="space-y-3 pt-6 border-t border-white/10">
-          {plan.features.map((feature, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="flex items-start gap-3"
-            >
-              <Check className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
-              <span className="text-sm text-foreground/90">{feature}</span>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function ComparisonTable() {
-  const features = [
-    { name: "Videos per month", free: "3", starter: "10", pro: "50", premium: "∞", gold: "∞" },
-    { name: "Video quality", free: "SD", starter: "HD", pro: "4K", premium: "8K", gold: "8K+" },
-    { name: "Templates", free: "Basic", starter: "All", pro: "Premium", premium: "All", gold: "Exclusive" },
-    { name: "Music library", free: "Limited", starter: "Full", pro: "Full", premium: "Full", gold: "Full" },
-    { name: "Custom music", free: "No", starter: "Yes", pro: "Yes", premium: "Yes", gold: "Yes" },
-    { name: "Social sharing", free: "No", starter: "Yes", pro: "Yes", premium: "Yes", gold: "Yes" },
-    { name: "Batch generation", free: "No", starter: "No", pro: "Yes", premium: "Yes", gold: "Yes" },
-    { name: "Analytics", free: "No", starter: "No", pro: "Yes", premium: "Yes", gold: "Yes" },
-    { name: "Support", free: "Community", starter: "Email", pro: "Priority", premium: "24/7", gold: "VIP" },
-    { name: "API access", free: "No", starter: "No", pro: "No", premium: "Yes", gold: "Yes" },
-  ];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
-      className="mt-16 space-y-4"
-    >
-      <h3 className="text-2xl font-bold font-heading">Feature Comparison</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-white/10">
-              <th className="text-left py-4 px-4 font-semibold">Feature</th>
-              {PRICING_PLANS.map((plan) => (
-                <th key={plan.id} className="text-center py-4 px-4 font-semibold">
-                  {plan.name}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {features.map((feature, i) => (
-              <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                <td className="py-4 px-4 text-foreground">{feature.name}</td>
-                <td className="text-center py-4 px-4 text-muted-foreground">{feature.free}</td>
-                <td className="text-center py-4 px-4 text-muted-foreground">{feature.starter}</td>
-                <td className="text-center py-4 px-4 text-muted-foreground">{feature.pro}</td>
-                <td className="text-center py-4 px-4 text-muted-foreground">{feature.premium}</td>
-                <td className="text-center py-4 px-4 text-primary font-semibold">{feature.gold}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </motion.div>
-  );
-}
+/**
+ * YES_PRICING_SYSTEM v6.0 // ELITE EDITION
+ * Engineered for maximum conversion and manual e-transfer fulfillment.
+ * Includes Hardware-Accelerated Blur and Adaptive Shadow Engines.
+ */
 
 export default function Pricing() {
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [showPayment, setShowPayment] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const handleSelectPlan = async (plan) => {
-    if (plan.id === "free") {
-      // Already free, just redirect
-      window.location.href = "/";
-      return;
-    }
+  // BUSINESS CONFIGURATION
+  const ETRANSFER_EMAIL = "PAYMENTS@YOURDOMAIN.COM"; 
+  const ELITE_PRICE = "$49";
+  
+  // High-IQ Reference Code Generation
+  const SESSION_REF = useMemo(() => "YES-" + Math.random().toString(36).substring(2, 8).toUpperCase(), []);
 
-    // TODO: Integrate with Stripe
-    // For now, show a message
-    alert(`Upgrading to ${plan.name} - Stripe integration coming soon!`);
-    console.log("Selected plan:", plan);
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="min-h-screen py-16 space-y-16 animate-fadeInUp">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center space-y-4 max-w-2xl mx-auto"
-      >
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-          <Crown size={16} className="text-primary" />
-          <span className="text-sm font-semibold text-primary">Simple, Transparent Pricing</span>
+    <div className="min-h-full py-16 px-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 selection:bg-[#D4AF37] selection:text-black">
+      
+      {/* 1. CINEMATIC OVERVIEW */}
+      <div className="text-center max-w-4xl mx-auto mb-24">
+        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/[0.03] border border-white/10 mb-10 backdrop-blur-md">
+          <Sparkles size={14} className="text-[#D4AF37]" />
+          <span className="text-[9px] font-black text-gray-400 uppercase tracking-[0.5em]">Neural Network // Subscription Access</span>
         </div>
-        <h1 className="text-5xl font-bold font-heading tracking-tight">
-          Choose Your Plan
+        <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white uppercase leading-[0.85] mb-8">
+          The <span className="gold-shimmer italic">Elite</span> <br /> Tier
         </h1>
-        <p className="text-lg text-muted-foreground">
-          Start free and upgrade anytime. All plans include our full feature set.
+        <p className="text-[11px] text-gray-500 uppercase tracking-[0.4em] font-bold max-w-xl mx-auto leading-relaxed">
+          Transition from a casual observer to a <span className="text-white">Neural Architect</span>. Unlock unlimited computing power and private server priority.
         </p>
-      </motion.div>
-
-      {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
-        {PRICING_PLANS.map((plan, i) => (
-          <motion.div
-            key={plan.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <PricingCard plan={plan} onSelect={handleSelectPlan} />
-          </motion.div>
-        ))}
       </div>
 
-      {/* Comparison Table */}
-      <div className="max-w-6xl mx-auto">
-        <ComparisonTable />
-      </div>
-
-      {/* FAQ Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="max-w-3xl mx-auto space-y-8"
-      >
-        <h2 className="text-3xl font-bold font-heading text-center">Frequently Asked Questions</h2>
-
-        <div className="space-y-4">
-          {[
-            {
-              q: "Can I change my plan anytime?",
-              a: "Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.",
-            },
-            {
-              q: "What happens to my videos if I downgrade?",
-              a: "All your videos remain in your library. You just get fewer monthly credits for new generations.",
-            },
-            {
-              q: "Is there a free trial?",
-              a: "Yes! Start with our Free plan (3 videos/month) or try Starter with a 7-day free trial.",
-            },
-            {
-              q: "Do you offer refunds?",
-              a: "We offer a 30-day money-back guarantee on all paid plans. No questions asked.",
-            },
-            {
-              q: "What payment methods do you accept?",
-              a: "We accept all major credit cards via Stripe. No PayPal or other methods at this time.",
-            },
-          ].map((faq, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 + i * 0.05 }}
-              className="glass rounded-2xl p-6 space-y-2"
-            >
-              <h3 className="font-semibold text-foreground">{faq.q}</h3>
-              <p className="text-sm text-muted-foreground">{faq.a}</p>
-            </motion.div>
-          ))}
+      {/* 2. POWER TIER ARCHITECTURE */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
+        
+        {/* THE OBSERVER (FREE) */}
+        <div className="group relative p-12 rounded-[4rem] bg-white/[0.01] border border-white/5 flex flex-col justify-between hover:bg-white/[0.02] transition-all duration-700">
+          <div>
+            <div className="flex justify-between items-start mb-12">
+              <div className="p-4 rounded-3xl bg-black border border-white/5 text-gray-600"><Zap size={28} /></div>
+              <span className="text-[8px] font-black text-gray-700 uppercase tracking-[0.6em]">Node Level 01</span>
+            </div>
+            <h4 className="text-3xl font-black text-white uppercase tracking-tighter mb-4 italic">Standard</h4>
+            <div className="flex items-baseline gap-2 mb-10">
+              <span className="text-5xl font-black text-white">$0</span>
+              <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">/ Access</span>
+            </div>
+            
+            <ul className="space-y-6">
+              {['3 Sequences / Mo', 'Public Render Queue', 'Standard Res Extraction', '72-Hour Storage'].map((f) => (
+                <li key={f} className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600">
+                  <div className="w-1.5 h-1.5 bg-gray-900 rounded-full"></div> {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <button disabled className="mt-16 w-full py-7 rounded-3xl border border-white/5 text-gray-800 text-[10px] font-black uppercase tracking-[0.5em] cursor-not-allowed">
+            Current Tier Active
+          </button>
         </div>
-      </motion.div>
 
-      {/* CTA Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="text-center space-y-4 max-w-2xl mx-auto"
-      >
-        <h2 className="text-3xl font-bold font-heading">Ready to create amazing videos?</h2>
-        <p className="text-muted-foreground">
-          Join thousands of creators using YES! Platform to bring their ideas to life.
-        </p>
-        <button
-          onClick={() => window.location.href = "/"}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-primary/80 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-primary/40 transition-all duration-200 hover:scale-105"
-        >
-          <Zap size={20} />
-          Get Started Now
-        </button>
-      </motion.div>
+        {/* THE ARCHITECT (ELITE) */}
+        <div className="relative group p-1 bg-gradient-to-br from-[#D4AF37]/50 via-transparent to-[#AA771C]/30 rounded-[4rem] shadow-[0_50px_100px_-30px_rgba(212,175,55,0.2)]">
+          <div className="bg-[#080808] rounded-[3.8rem] p-12 h-full flex flex-col justify-between relative overflow-hidden">
+            
+            {/* Visual Flair */}
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#D4AF37]/10 blur-[100px] rounded-full group-hover:scale-150 transition-transform duration-[3000ms]"></div>
+            <div className="absolute top-10 right-10 opacity-20"><Crown size={40} className="text-[#D4AF37]" /></div>
+
+            <div>
+              <div className="flex justify-between items-center mb-12">
+                <h3 className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.5em]">Unlimited Processing</h3>
+                <div className="px-5 py-1.5 bg-[#D4AF37] text-black text-[9px] font-black uppercase tracking-widest rounded-full shadow-[0_0_20px_rgba(212,175,55,0.4)]">Premium</div>
+              </div>
+              <h4 className="text-3xl font-black text-white uppercase tracking-tighter mb-4 italic">The Architect Pass</h4>
+              <div className="flex items-baseline gap-2 mb-10">
+                <span className="text-6xl font-black text-white leading-none">{ELITE_PRICE}</span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">/ Per Month</span>
+              </div>
+
+              <ul className="space-y-6">
+                {[
+                  'Unlimited AI Video Renders',
+                  'Instant Priority Queue',
+                  'Native 4K HDR Extractions',
+                  'Permanent Private Vault',
+                  'Commercial Project Rights'
+                ].map((f) => (
+                  <li key={f} className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                    <div className="bg-[#D4AF37]/10 p-1 rounded-md">
+                      <Check size={14} className="text-[#D4AF37]" strokeWidth={4} />
+                    </div>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <button 
+              onClick={() => setShowPayment(true)}
+              className="mt-16 group/btn relative w-full py-7 rounded-3xl overflow-hidden transition-all duration-500 active:scale-95 shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#AA771C] group-hover/btn:brightness-110 transition-all"></div>
+              <span className="relative flex items-center justify-center gap-4 text-black text-[11px] font-black uppercase tracking-[0.5em]">
+                Elevate Access <ChevronRight size={16} strokeWidth={3} className="group-hover/btn:translate-x-2 transition-transform" />
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. PAYMENT PORTAL (MANUAL BRIDGE) */}
+      {showPayment && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-500">
+          <div className="bg-[#050505] border border-white/10 p-12 rounded-[4.5rem] max-w-md w-full relative shadow-[0_0_150px_rgba(212,175,55,0.25)] ring-1 ring-white/5">
+            
+            <button onClick={() => setShowPayment(false)} className="absolute top-12 right-12 text-gray-600 hover:text-white transition-all uppercase text-[9px] font-black tracking-[0.5em] group flex items-center gap-2">
+              Exit <span className="group-hover:translate-x-1 transition-transform">[X]</span>
+            </button>
+            
+            <div className="text-center mb-12">
+              <div className="w-24 h-24 bg-gradient-to-b from-[#D4AF37]/20 to-transparent rounded-full flex items-center justify-center mx-auto mb-8 border border-[#D4AF37]/30 shadow-[inset_0_0_20px_rgba(212,175,55,0.2)]">
+                <ShieldCheck className="text-[#D4AF37]" size={40} strokeWidth={1.5} />
+              </div>
+              <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Secure Gateway</h2>
+              <p className="text-[10px] text-gray-600 uppercase tracking-[0.4em] mt-3 font-bold italic">Manual Fulfillment Node</p>
+            </div>
+
+            <div className="space-y-7">
+              {/* Recipient */}
+              <div className="group p-7 bg-white/[0.02] border border-white/5 rounded-[2.5rem] hover:bg-white/[0.04] transition-all">
+                <p className="text-[8px] text-gray-600 uppercase tracking-[0.4em] font-black mb-4 group-hover:text-[#D4AF37] transition-colors">Interac Recipient</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white font-bold tracking-[0.1em]">{ETRANSFER_EMAIL}</span>
+                  <button onClick={() => handleCopy(ETRANSFER_EMAIL)} className="p-2 hover:bg-[#D4AF37] hover:text-black rounded-xl transition-all"><Copy size={18}/></button>
+                </div>
+              </div>
+
+              {/* Reference ID */}
+              <div className="group p-7 bg-[#D4AF37]/5 border border-[#D4AF37]/20 rounded-[2.5rem] shadow-[inset_0_0_20px_rgba(212,175,55,0.05)]">
+                <p className="text-[8px] text-[#D4AF37] uppercase tracking-[0.5em] font-black mb-4 italic">Important: Message / Note</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-white font-black tracking-[0.2em]">{SESSION_REF}</span>
+                  <button onClick={() => handleCopy(SESSION_REF)} className="p-2 bg-[#D4AF37] text-black rounded-xl hover:scale-110 transition-transform shadow-[0_0_15px_rgba(212,175,55,0.3)]"><Copy size={18}/></button>
+                </div>
+              </div>
+
+              <div className="text-center pt-6">
+                 <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-bold leading-relaxed">
+                   Transfer <span className="text-white">{ELITE_PRICE} CAD</span> to the address above. <br />
+                   Verify reference matches ID exactly.
+                 </p>
+                 <div className="h-[1px] w-12 bg-[#D4AF37]/30 mx-auto mt-6"></div>
+                 <p className="text-[7px] text-gray-700 uppercase tracking-widest mt-4">Node Processing Time: 1-4 Hours</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
