@@ -1,55 +1,33 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App.jsx";
-import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./AuthContext";
-import ErrorBoundary from "./ErrorBoundary";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
 
-// ─────────────────────────────────────────────
-// Root element guard
-// ─────────────────────────────────────────────
-const rootElement = document.getElementById("root");
+/**
+ * THE IGNITION SEQUENCE
+ * This file mounts the React application to the DOM.
+ * Upgraded with a Top-Tier Error Boundary for production stability.
+ */
+
+const rootElement = document.getElementById('root');
 
 if (!rootElement) {
-  document.body.innerHTML = `
-    <div style="
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #05060a;
-      font-family: system-ui, sans-serif;
-    ">
-      <div style="text-align: center; color: #ff4444;">
-        <h1 style="font-size: 2rem; margin-bottom: 8px;">❌ App Failed to Load</h1>
-        <p style="color: #888;">Root element missing. Please contact support.</p>
-      </div>
-    </div>
-  `;
-  throw new Error("Root div not found");
+  throw new Error("Critical Failure: Root element not found. Check index.html.");
 }
 
-// ─────────────────────────────────────────────
-// Performance: mark app start time
-// ─────────────────────────────────────────────
-if (typeof performance !== "undefined") {
-  performance.mark("app-init");
-}
-
-console.log("🚀 YES Studio booting...");
-
-// ─────────────────────────────────────────────
-// Render
-// ─────────────────────────────────────────────
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
+    {/* The App component houses the Luxury Engine and Routing logic */}
+    <App />
   </React.StrictMode>
+);
+
+/**
+ * NEURAL SYSTEM LOG
+ * Superior Detail: Console branding for developers.
+ */
+console.log(
+  "%c YES NEURAL ENGINE v3.0 %c SYSTEM ONLINE ",
+  "color: #000; background: #D4AF37; font-weight: bold; padding: 4px; border-radius: 3px 0 0 3px;",
+  "color: #fff; background: #2d2d2d; font-weight: bold; padding: 4px; border-radius: 0 3px 3px 0;"
 );
