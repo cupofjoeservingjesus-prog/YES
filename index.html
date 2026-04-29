@@ -1,41 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YES | Neural Video Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet" />
-    <style>
-      body {
-        background-color: #050505;
-        margin: 0;
-        background: radial-gradient(circle at 50% -20%, #1e293b 0%, #050505 80%);
-        background-attachment: fixed;
-        min-height: 100vh;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YES | Neural Video Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Tenor+Sans&family=DM+Sans:wght@200;400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold-deep: #AA771C;
+      --gold-mid: #BF953F;
+      --gold-light: #FCF6BA;
+      --midnight: #020205;
+      --navy-glow: #0a1128;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--midnight);
+      color: white;
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden;
+      cursor: none;
+      height: 100vh;
+    }
+
+    /* ── HYBRID CANVAS ── */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* ── THE NOISE TEXTURE ── */
+    .noise {
+      position: fixed; inset: 0; z-index: 1; opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* ── MAIN STAGE ── */
+    .stage {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.6em;
+      color: rgba(191, 149, 63, 0.4);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    .main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(100px, 15vw, 190px);
+      font-weight: 600;
+      font-style: italic;
+      line-height: 0.9;
+      background: linear-gradient(135deg, var(--gold-deep) 0%, var(--gold-light) 50%, var(--gold-deep) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: goldShimmer 6s linear infinite;
+      letter-spacing: -0.02em;
+    }
+
+    @keyframes goldShimmer {
+      to { background-position: 200% center; }
+    }
+
+    .divider {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--gold-mid), transparent);
+      margin: 30px 0;
+      opacity: 0.3;
+    }
+
+    .subtitle {
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.9em;
+      color: rgba(255, 255, 255, 0.2);
+      text-transform: uppercase;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    #cursor-dot {
+      position: fixed; width: 6px; height: 6px; background: var(--gold-light);
+      border-radius: 50%; pointer-events: none; z-index: 100; transform: translate(-50%, -50%);
+    }
+    #cursor-ring {
+      position: fixed; width: 40px; height: 40px; border: 1px solid rgba(191, 149, 63, 0.3);
+      border-radius: 50%; pointer-events: none; z-index: 99; transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+    }
+
+    /* ── UI BARS ── */
+    .bar {
+      position: fixed;
+      width: 100%;
+      padding: 40px 60px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 8px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      z-index: 20;
+    }
+    .top { top: 0; }
+    .bottom { bottom: 0; }
+
+    .btn-action {
+      margin-top: 50px;
+      padding: 15px 40px;
+      background: transparent;
+      border: 1px solid rgba(191,149,63,0.2);
+      color: var(--gold-mid);
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      transition: all 0.5s;
+    }
+    .btn-action:hover {
+      border-color: var(--gold-light);
+      background: rgba(191,149,63,0.05);
+      color: var(--gold-light);
+      box-shadow: 0 0 20px rgba(191,149,63,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="noise"></div>
+
+  <nav class="bar top">
+    <span>System Status: Optimal</span>
+    <span>Neural Core v3.0</span>
+  </nav>
+
+  <main class="stage">
+    <p class="eyebrow">The Future of Cinematic AI</p>
+    <h1 class="main-title">YES</h1>
+    <div class="divider"></div>
+    <p class="subtitle">Neural Video Engine</p>
+    <button class="btn-action">Enter the Void</button>
+  </main>
+
+  <footer class="bar bottom">
+    <span>&copy; 2026 Neural Intelligence</span>
+    <span>Designed for Excellence</span>
+  </footer>
+
+  <script>
+    // --- CURSOR LOGIC ---
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      dot.style.left = mouseX + 'px';
+      dot.style.top = mouseY + 'px';
+    });
+
+    function animateRing() {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      ring.style.left = ringX + 'px';
+      ring.style.top = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // --- NEURAL BACKGROUND ENGINE ---
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [];
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+
+    class Particle {
+      constructor() {
+        this.reset();
       }
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-        filter: contrast(170%) brightness(1000%);
-        opacity: 0.04;
-        pointer-events: none;
-        z-index: 9999;
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.5;
       }
-      .gold-shimmer {
-        background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 50%, #AA771C 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: shimmer 10s linear infinite;
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
       }
-      @keyframes shimmer { to { background-position: 200% center; } }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+      draw() {
+        ctx.fillStyle = `rgba(191, 149, 63, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      resize();
+      for(let i = 0; i < 80; i++) particles.push(new Particle());
+    }
+
+    function render() {
+      // Create the deep navy spotlight effect
+      const gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+      gradient.addColorStop(0, '#0a1128'); // Luxury Blue
+      gradient.addColorStop(1, '#020205'); // Deep Black
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
+
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(render);
+    }
+
+    window.addEventListener('resize', resize);
+    init();
+    render();
+  </script>
+</body>
 </html>
