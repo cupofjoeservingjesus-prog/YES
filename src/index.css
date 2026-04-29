@@ -1,46 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
- 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
-  :root, .dark {
+  :root {
     --font-heading: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', sans-serif;
 
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 95%;
+    /* THE OBSIDIAN PALETTE - Deep, Industrial, Precise */
+    --background: 240 10% 2%;    /* Pure Midnight */
+    --foreground: 0 0% 98%;
 
-    --card: 240 6% 8%;
-    --card-foreground: 0 0% 95%;
+    --card: 240 10% 4%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 240 6% 8%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 263 70% 58%;
+    /* THE ELITE GOLD - Mapped to your Brand Tokens */
+    --primary: 38 50% 48%;       /* #BF953F */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 5% 14%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 240 5% 10%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 5% 14%;
+    --muted: 240 5% 15%;
     --muted-foreground: 240 5% 65%;
 
-    --accent: 263 70% 58%;
+    --accent: 38 50% 48%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 12%;
+    --input: 240 5% 12%;
+    --ring: 38 50% 48%;
 
-    --border: 240 5% 18%;
-    --input: 240 5% 18%;
-    --ring: 263 70% 58%;
-
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -48,14 +47,29 @@
   
   html {
     scroll-behavior: smooth;
+    background: #020205; /* Fallback */
   }
   
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
-    font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    
+    /* CINEMATIC LIGHTING: The "Deep Sea" Navy Spotlight */
+    background-image: radial-gradient(circle at 50% -20%, #0a1128 0%, #020205 85%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  /* NEURAL TEXTURE: Adds the expensive "Film Grain" look */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 50;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -64,208 +78,38 @@
   }
 }
 
-@layer components {
-  /* Supernatural animations */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-      filter: blur(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
+@layer utilities {
+  /* THE SHIMMER ENGINE: Makes gold text feel metallic */
+  .text-gold-shimmer {
+    background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 50%, #AA771C 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gold-shimmer 5s linear infinite;
   }
 
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-      filter: blur(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
+  @keyframes gold-shimmer {
+    to { background-position: 200% center; }
   }
 
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+  /* HIGH-FIDELITY BLUR: Smoked Obsidian effect */
+  .backdrop-blur-4xl {
+    backdrop-filter: blur(80px);
+    -webkit-backdrop-filter: blur(80px);
   }
 
-  @keyframes slideInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
+  /* CUSTOM MINIMALIST SCROLLBAR */
+  ::-webkit-scrollbar {
+    width: 4px;
   }
-
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
+  ::-webkit-scrollbar-track {
+    background: #020205;
   }
-
-  @keyframes glow {
-    0%, 100% {
-      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
-    }
-    50% {
-      box-shadow: 0 0 40px rgba(168, 85, 247, 0.5);
-    }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(191, 149, 63, 0.2);
+    border-radius: 10px;
   }
-
-  @keyframes shimmer {
-    0% {
-      background-position: -1000px 0;
-    }
-    100% {
-      background-position: 1000px 0;
-    }
-  }
-
-  @keyframes pulse-glow {
-    0%, 100% {
-      opacity: 0.5;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  @keyframes spin-slow {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  /* Utility classes */
-  .animate-fadeInUp {
-    animation: fadeInUp 0.6s ease-out;
-  }
-
-  .animate-fadeInDown {
-    animation: fadeInDown 0.6s ease-out;
-  }
-
-  .animate-scaleIn {
-    animation: scaleIn 0.4s ease-out;
-  }
-
-  .animate-slideInLeft {
-    animation: slideInLeft 0.5s ease-out;
-  }
-
-  .animate-slideInRight {
-    animation: slideInRight 0.5s ease-out;
-  }
-
-  .animate-glow {
-    animation: glow 3s ease-in-out infinite;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 2s infinite;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    background-size: 1000px 100%;
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .animate-spin-slow {
-    animation: spin-slow 8s linear infinite;
-  }
-
-  /* Glass effect */
-  .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
-  }
-
-  .glass-dark {
-    @apply bg-black/30 backdrop-blur-xl border border-white/5;
-  }
-
-  .glass-hover {
-    @apply glass transition-smooth hover:bg-white/10 hover:border-white/20;
-  }
-
-  /* Gradient text */
-  .gradient-text {
-    @apply bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent;
-  }
-
-  .gradient-text-purple {
-    @apply bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent;
-  }
-
-  /* Smooth transitions */
-  .transition-smooth {
-    @apply transition-all duration-300 ease-out;
-  }
-
-  .transition-smooth-fast {
-    @apply transition-all duration-150 ease-out;
-  }
-
-  /* Hover lift effect */
-  .hover-lift {
-    @apply transition-smooth hover:shadow-2xl hover:shadow-indigo-500/20 hover:-translate-y-1;
-  }
-
-  /* Button glow */
-  .btn-glow {
-    @apply relative overflow-hidden transition-smooth hover:shadow-lg hover:shadow-indigo-500/50;
-  }
-
-  /* Card premium */
-  .card-premium {
-    @apply glass rounded-2xl p-6 transition-smooth hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/10;
-  }
-
-  /* Loading skeleton */
-  .skeleton {
-    @apply animate-pulse bg-white/5 rounded-lg;
-  }
-
-  /* Backdrop blur */
-  .backdrop-blur-xl {
-    backdrop-filter: blur(20px);
+  ::-webkit-scrollbar-thumb:hover {
+    background: #BF953F;
   }
 }
